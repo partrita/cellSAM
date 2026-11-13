@@ -41,7 +41,7 @@ uv run python your_script.py
 uv run pytest
 ```
 
-When changing dependencies, update the project metadata with `uv add` (or edit `pyproject.toml`) and regenerate the lockfile with `uv lock`. Commit both `pyproject.toml` and `uv.lock` so contributors use a reproducible environment.
+When changing dependencies, update the project metadata with `uv add` (or edit `pyproject.toml`) and regenerate the lockfile with `uv lock`. Commit both `pyproject.toml` and the generated `uv.lock` so contributors use a reproducible environment.
 
 CellSAM requires `python>=3.10`, but otherwise uses pure PyTorch. A sample image is included in this repository. Segmentation can be performed as follows:
 
