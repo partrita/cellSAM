@@ -11,6 +11,7 @@ dynamic = ['version']
 dependencies = [
     'numpy',
     'pyyaml',
+    'scipy',
     'scikit-image',
     'segment_anything@git+https://github.com/facebookresearch/segment-anything.git',
     'torch',
@@ -31,6 +32,27 @@ napari = [
     'napari',
     'magicgui',
     'qtpy'
+]
+remote-data = [
+    'zarr>2',
+    's3fs',
+]
+
+[dependency-groups]
+dev = [
+    'pytest',
+]
+docs = [
+    'matplotlib',
+    'sphinx',
+    'myst-nb',
+    'pydata-sphinx-theme',
+    'sphinx-gallery',
+    'sphinx-togglebutton',
+    'napari',
+    'pyqt6',
+    'numpydoc',
+    'intersphinx_registry',
 ]
 
 [project.scripts]
