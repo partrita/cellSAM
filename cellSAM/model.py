@@ -52,7 +52,7 @@ def get_model(model="cellsam_general", version=None) -> nn.Module:
     Returns a loaded CellSAM model.
 
     If pretrained model weights specified by ``version`` are not found locally,
-    they will be downloaded from users.deepcell.org.
+    they will be downloaded from Hugging Face at https://huggingface.co/vanvalenlab/cellsam.
 
     Parameters
     ----------
@@ -85,7 +85,7 @@ def get_model(model="cellsam_general", version=None) -> nn.Module:
     record = _auth._model_versions[version]
     archive_name = record["asset_key"].split("/")[-1]
 
-    cellsam_assets_dir = Path.home() / f".deepcell/models"
+    cellsam_assets_dir = Path.home() / ".cellsam_hf/models"
     model_version_dir = cellsam_assets_dir / f"cellsam_v{version}"
     model_path = model_version_dir / f"{model}.pt"
 

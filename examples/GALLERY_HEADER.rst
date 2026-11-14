@@ -1,4 +1,4 @@
 .. _example_gallery:
 
-Gallery
-=======
+갤러리
+========

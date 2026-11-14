@@ -1,14 +1,14 @@
-Reference
-=========
+참조
+========
 
-   :Release: |release|
-   :Date: |today|
+|릴리스: |release|
+|날짜: |today|
 
 ..
    TODO: add automodule for inference as necessary
 
-Inference
----------
+인펀서
+--------
 
 .. currentmodule:: cellSAM.cellsam_pipeline
 

@@ -1,141 +1,118 @@
-# Reproducibility
+# 재현성
 
-In addition to the `cellSAM` library, the source repo contains additional
-code to aid in reproducing the results in the publication.
-This additional code for reproducibility can be found in the
-[`paper_evaluation`][gh-eval] directory.
+CellSAM 라이브러리 외에도 게재된 결과를 재현하는 데 도움이 추가적인 코드가 포함된 [`paper_evaluation`][gh-eval] 디렉토리를 확인하세요.
 
 [gh-eval]: https://github.com/vanvalenlab/cellSAM/tree/master/paper_evaluation
 
-Additional resources including pre-trained model weights and the evaluation dataset
-are required for reproducibility.
-All necessary components are available for download - see {doc}`API-key` for
-details.
+재현성을 위한 추가 리소스에는 사전 학습된 모델 가중치와 평가 데이터셋이 포함됩니다. 모든 필수 구성요소는 {doc}`API-key`에서 세부 정보를 확인할 수 있습니다.
 
-## Setup
+## 설정
 
-In a new (empty) virtual environment, install cellSAM from the parent directory.
+새로운 (빈) 가상 환경에서 부모 디렉토리에서 cellSAM을 설치하세요.
 
-````{admonition} Example: creating an environment
+````{admonition} 예: 환경 생성
 :class: tip dropdown
 
-Users are encouraged to use whichever environment management system with which they
-are most comfortable (`uv`, `pixi`, `conda/mamba`, etc.)
+사용자는 가장 편한 환경 관리 시스템을 사용하시기를 권장합니다 (`uv`, `pixi`, `conda/mamba` 등)
 
-For those unsure, Python's [built-in environment management module][python-venv] is
-a simple, ubiquitous option. For example, to create and enter a new environment:
+아직 익숙하지 않으시다면, Python의 [내장 환경 관리 모듈][python-venv]는 간단하고 널리 사용되는 옵션입니다. 예를 들어, 새로운 환경을 생성하고 진입하려면 다음과 같이 하세요:
 
 ```bash
 $ python3.XX -m venv cs-eval-env
 $ source cs-eval-env/bin/activate
 ```
 
-Where `XX` is the Python version you wish to use (e.g. `python3.13`).
-You can then verify the newly created environment is empty (though `pip` should be available):
+여기서 `XX`는 사용하고자 하는 Python 버전입니다(예: `python3.13`). 새로 만든 환경이 비어 있는지는 `uv`를 사용하여 확인할 수 있습니다(사용 중이어야 함):
 
 ```bash
-$ pip list
-Package Version
-------- -------
-pip     24.3.1
+$ uv list
 ```
+
 ````
 
 [python-venv]: https://docs.python.org/3/library/venv.html
 
-For example, from the `paper_evaluation` directory:
+예를 들어 `paper_evaluation` 디렉토리에서:
 
 ```bash
-$ pip install ..
+$ uv sync
 ```
 
-### Evaluation dependencies
+### 평가 의존성
 
-Once in a "clean" environment, install the requirements for the evaluation suite:
+"clean" 환경에 들어간 후 평가 세트를 위한 요구 사항을 설치하세요:
 
 ```bash
-$ pip install -r requirements.txt
+$ uv sync
 ```
 
 ```{note}
-This may downgrade some of the dependencies (e.g. `torch`, `numpy`, etc.) installed
-in the previous step.
+이전 단계에 설치된 종속성(예: `torch`, `numpy` 등)을 일부 다운그레이드할 수 있습니다.
 ```
 
-### Evaluation models
+### 평가 모델
 
-The pretrained model weights necessary for reproducibility are available via the `get_model`
-function:
+재현성을 위해 필요한 사전 학습된 모델 가중치는 `get_model` 함수를 통해 이용할 수 있습니다:
 
 ```python
 >>> from cellSAM import get_model
 >>> get_model();
 ```
 
-This will automatically download and unpack the latest version of the pretrained model weights.
+가장 최신의 사전 학습된 모델 가중치를 자동으로 다운로드하고 압축을 풉니다.
 
-```{admonition} Model versions
+```{admonition} 모델 버전
 :class: note dropdown
 
-You may use the `version=` keyword argument for `get_model` to specify a specific
-model version for evaluation.
+`get_model`에 `version=` 키워드 인자를 사용하여 특정 모델 버전을 지정할 수 있습니다.
 
- - Version `1.2` is the version that was used to produce the published results in the paper
- - Version `1.2` is the *minimum* model version which is designed to work with the
-   reproducibility workflow.
+ - 버전 `1.2`는 논문에 게재된 결과를 생성하는 데 사용된 버전
+ - 버전 `1.2`는 재현성 워크플로우와 호환되는 *최소* 모델 버전
+```
 ```
 
-### Evaluation dataset
+### 평가 데이터셋
 
-Make sure you have the evaluation dataset. This can be downloaded with:
+평가 데이터셋이 있는지 확인하세요. 다음을 통해 다운로드할 수 있습니다:
 
 ```python
 >>> from cellSAM import download_training_data
 >>> download_training_data()
 ```
 
-This will initiate the download of a compressed data archive.
-The compressed data will be downloaded to
-`$HOME/.deepcell/datasets/cellsam-data_v{X.Y}.tar.gz` where `X.Y` is the requested
-dataset version.
-See {doc}`API-key` for details.
-Once the download is complete, unpack/inflate the dataset to a desired location.
+압축된 데이터 아카이브 다운로드를 시작합니다. 압축된 데이터는 `$HOME/.cellsam_hf/datasets/cellsam-data_v{X.Y}.tar.gz`에 다운로드됩니다. 여기서 `X.Y`는 요청한 데이터셋 버전입니다.
 
-````{admonition} Dataset Size
+압축을 풉�니다/uncompresses the dataset to a desired location.
+
+```{admonition} 데이터셋 크기
 :class: caution dropdown
 
-The compressed data archive is 14GB in size, and inflates to 84GB when uncompressed.
-Therefore you may want to unpack the data to a different location.
-Similarly, the decompression is comuptationally intensive, and may benefit from parallel
-decompression algorithms.
-Here's an example incantation which will store the unpacked dataset to `/data` using 8
-threads for decompression:
+압축된 데이터 아카이브는 14GB이며, 풀리면 84GB가 됩니다. 따라서 데이터를 다른 위치에 푸는 것을 권장합니다. 마찬가지로, 압축 해제는 계산적으로 집중적이며 병렬 압축 알고리즘의 이점을 볼 수 있습니다.
+
+데이터를 `/data`에 8개의 스레드로 압축 해제하는 예시 Incantation:
 
 ```bash
-$ tar --use-compress-program="unpigz -p 8" -xf $HOME/.deepcell/datasets/cellsam-data_v1.2.tar.gz -C /data
+$ tar --use-compress-program="unpigz -p 8" -xf $HOME/.cellsam_hf/datasets/cellsam-data_v1.2.tar.gz -C /data
 ```
 
-The unpacked data will then be available at `/data/cellsam_v1.2`.
-````
+풀린 데이터는 `/data/cellsam_v1.2`에서 사용할 수 있습니다.
+```
+```
+```
 
-## Running the evaluation
+## 평가 실행
 
-Once all of the above steps are complete, the evaluation can be run via the `all_run.sh`
-shell script.
-Before running, ensure that the variables at the top of the file reflect the locations of
-the models/dataset on your system.
-If you used the defaults in all the steps above (and unpacked the dataset in its
-download location) this will already be the case.
+모든 위의 단계를 완료한 후 `all_runs.sh` 쉘 스크립트를 통해 평가를 실행할 수 있습니다. 모델/데이터셋의 위치는 파일의 최상단 변수가 반영되도록 하세요. 위에서 기본값을 사용한 경우(그리고 기본 위치에 데이터셋을 푼 경우) 이미 해당 사항이 적용됩니다.
 
 ```bash
 $ ./all_runs.sh
 ```
 
-The results of each run will be saved locally in a `summary.csv` that records the datset,
-model used, and `f1_mean` for that run.
+각 실행의 결과는 `summary.csv`에 로컬로 저장되며, 해당 데이터셋, 사용된 모델, 그리고 `f1_mean`을 기록합니다.
 
-### Individual evaluations
+### 개별 평가
 
-It is not necessary to run the entire evaluation suite - evaluation can be limited to
-specific datasets.
-See the `all_runs.sh` for a general idea of how to do so via `eval_main.py`.
+전체 평가 세트를 실행할 필요는 없습니다. 특정 데이터셋에 대한 평가를 제한할 수 있습니다.
+
+`all_runs.sh`를 통해 일반적인 아이디어를 얻으려면 `eval_main.py`를 사용하는 방법을 확인하세요.
+```

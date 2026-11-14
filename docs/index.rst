@@ -1,37 +1,32 @@
-CellSAM Documentation
-=====================
+CellSAM 문서
+==============
 
-Welcome to the CellSAM documentation!
+CellSAM는 세포 세그먼테이션을 위한 범용 모델입니다.
 
-CellSAM is a universal model for cell segmentation.
-CellSAM achieves state-of-the-art performance on segmentation across a variety
-of cellular targets (bacteria, tissue, yeast, cell culture, etc.) and imaging
-modalities (brightfield, fluorescence, phase, multiplexed, etc.).
+CellSAM는 박테리아, 조직, 효모, 세포 배양 등 다양한 세포 표적 및 영상 모달리티(밝은 빛, 형광, 위상, 멀티플렉스 등)에서 최신 성능을 달성합니다.
 
-See the `preprint`_ for more information about the model and the general
-approach to image segmentation.
+모델 및 일반적인 접근 방식에 대한 자세한 내용은 `사전 인쇄`_를 참조하세요.
 
-.. _preprint: https://www.biorxiv.org/content/10.1101/2023.11.17.567630v3
+.. _사전 인쇄: https://www.biorxiv.org/content/10.1101/2023.11.17.567630v3
 
-Installation
-------------
+설치
+--------
 
 .. code-block:: bash
 
-   pip install git+https://github.com/vanvalenlab/cellSAM.git
+   uv sync
 
 .. currentmodule:: cellSAM.cellsam_pipeline
 
-Basic Usage
------------
+기본 사용법
+------------
 
-The primary interface is :func:`cellsam_pipeline`, which implements
-the inference pipeline for the CellSAM model.
-See the :ref:`example_gallery` for examples of CellSAM applied to different
-types of images.
+primary 인터페이스는 :func:`cellsam_pipeline`으로, CellSAM 모델의 추론 파이프라인을 구현합니다.
 
-Citation
---------
+예시 갤러리에서 CellSAM가 다양한 이미지에 적용된 예를 확인하세요 :ref:`example_gallery`.
+
+인용
+------
 
 .. code-block:: latex
 

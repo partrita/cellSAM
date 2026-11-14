@@ -8,7 +8,7 @@ from .sam_inference import CellSAM
 def download_training_data(version=None):
     """Download the data for the CellSAM model.
 
-    The compressed dataset will be downloaded to ``$HOME/.deepcell/data``.
+    The compressed dataset will be downloaded to ``$HOME/.cellsam_hf/data``.
 
     Parameters
     ----------

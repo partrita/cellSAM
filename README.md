@@ -4,46 +4,47 @@
 
 [pinned-issue]: https://github.com/vanvalenlab/cellSAM/issues/90
 
-## Description
-This repository provides inference code for CellSAM. CellSAM is described in more detail in the [preprint](https://www.biorxiv.org/content/10.1101/2023.11.17.567630v3), and is publicly deployed at [cellsam.deepcell.org](https://cellsam.deepcell.org/). CellSAM achieves state-of-the-art performance on segmentation across a variety of cellular targets (bacteria, tissue, yeast, cell culture, etc.) and imaging modalities (brightfield, fluorescence, phase, etc.). Feel free to [reach out](mailto:ulisrael@caltech.edu) for support/questions! The full dataset used to evaluate CellSAM is available via <https://users.deepcell.org>. This dataset contains cellpose data which is subject to the cellpose license [here](https://github.com/mouseland/cellpose?tab=BSD-3-Clause-1-ov-file). The cellpose data can also be downloaded from [here](https://www.cellpose.org/dataset).
+## 설명
+이 리포지토리는 CellSAM에 대한 추론 코드를 제공합니다. CellSAM은 [사전 인쇄](https://www.biorxiv.org/content/10.1101/2023.11.17.567630v3)에 대해 더 자세히 설명되어 있으며, [https://huggingface.co/vanvalenlab/cellsam](https://huggingface.co/vanvalenlab/cellsam)에서 공개적으로 배포됩니다. CellSAM는 박테리아, 조직, 효모, 세포 배양 등 다양한 세포 표적 및 영상 모달리티(밝은 빛, 형광, 위상 등)에서 최신 성능을 달성합니다. 지원/질문이 있으면 [연락](mailto:ulisrael@caltech.edu) 주세요! 모델 가중치는 Hugging Face Hub에서 이용할 수 있습니다. 전체 평가 데이터셋은 별도 라이선스하에 제공되며 적절한 경로를 통해 얻을 수 있습니다.
 
-## Getting started
-
-The easiest way to get started with CellSAM is with pip:
+## 시작하기
+CellSAM를 시작하는 가장 쉬운 방법은 이 리포지토리를 클론하고 `uv`를 사용하는 것입니다:
 
 ```bash
-pip install git+https://github.com/vanvalenlab/cellSAM.git
+git clone https://github.com/vanvalenlab/cellSAM.git
+cd cellSAM
+uv sync
 ```
 
-For local development, this repository uses [uv](https://docs.astral.sh/uv/) to manage the Python environment and dependencies. Install uv, then run:
+로컬 개발의 경우, 이 리포지토리는 [uv](https://docs.astral.sh/uv/)를 사용하여 Python 환경 및 의존성을 관리합니다. uv를 설치한 다음 다음과 같이 실행하세요:
 
 ```bash
 uv sync
 ```
 
-This installs CellSAM and its runtime dependencies from `pyproject.toml`. Optional dependencies can be installed as needed:
+선택 의존성을 설치해야 하는 경우:
 
 ```bash
-# Napari annotation support
+# Napari 주석 지원
 uv sync --extra napari
 
-# Remote data access
+# 원격 데이터 액세스
 uv sync --extra remote-data
 
-# Development and documentation dependencies
+# 개발 및 문서화 의존성
 uv sync --group dev --group docs
 ```
 
-Use `uv run` to execute commands in the managed environment:
+`uv run`을 사용하여 관리된 환경에서 명령을 실행하세요:
 
 ```bash
 uv run python your_script.py
 uv run pytest
 ```
 
-When changing dependencies, update the project metadata with `uv add` (or edit `pyproject.toml`) and regenerate the lockfile with `uv lock`. Commit both `pyproject.toml` and the generated `uv.lock` so contributors use a reproducible environment.
+의존성을 변경하면 `uv add`로 프로젝트 메타데이터를 업데이트(또는 `pyproject.toml`을 편집)하고 `uv lock`로 lockfile을 재생성하세요. contributor가 재현 가능한 환경을 사용할 수 있도록 `pyproject.toml`과 생성된 `uv.lock`을 모두 커밋하세요.
 
-CellSAM requires `python>=3.10`, but otherwise uses pure PyTorch. A sample image is included in this repository. Segmentation can be performed as follows:
+CellSAM는 `python>=3.10`을 요구하지만, 그 외에는 순수 PyTorch를 사용합니다. 샘플 이미지가 이 리포지토리에 포함되어 있습니다. 세그먼테이션은 다음과 같이 수행할 수 있습니다:
 
 ```python
 import numpy as np
@@ -53,22 +54,19 @@ img = np.load("sample_imgs/yeaz.npy")
 mask, _, _ = segment_cellular_image(img, device="cuda")
 ```
 
-For more details, see [the tutorial](https://vanvalenlab.github.io/cellSAM/tutorial).
+더 자세한 내용은 [튜토리얼](https://vanvalenlab.github.io/cellSAM/tutorial)을 참조하세요.
 
-### Napari package
-
-CellSAM includes a basic napari package for annotation functionality. To install the additional napari dependencies, use the `napari` optional dependency group:
+### Napari 패키지
+CellSAM에는 기본 Napari 주석 패키지가 포함되어 있습니다. Napari 추가 의존성을 설치하려면 `napari` 선택적 의존성 그룹을 사용하세요:
 
 ```bash
 uv sync --extra napari
 ```
 
-To launch the napari app, run `uv run cellsam napari`.
-For further details, check out the [napari plugin docs](https://vanvalenlab.github.io/cellSAM/napari.html).
+Napari 앱을 시작하려면 `uv run cellsam napari`를 실행하세요. Napari 플러그인 문서에 대한 자세한 내용은 [https://vanvalenlab.github.io/cellSAM/napari.html](https://vanvalenlab.github.io/cellSAM/napari.html)를 확인하세요.
 
-## Citation
-
-Please cite us if you use CellSAM.
+## 인용
+CellSAM를 사용하는 경우 참고해 주세요.
 
 ```
 @article{israel2023foundation,

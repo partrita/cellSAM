@@ -10,8 +10,8 @@ import tarfile
 import zipfile
 
 
-_api_endpoint = "https://users.deepcell.org/api/getData/"
-_asset_location = Path.home() / ".deepcell"
+_api_endpoint = "https://huggingface.co/api/models/vanvalenlab/cellsam"
+_asset_location = Path.home() / ".cellsam_hf"
 
 
 _data_versions = {
@@ -30,33 +30,31 @@ _data_versions = {
 
 _model_versions = {
     "1.2": {
-        "asset_key": "models/cellsam-models_v1.2.tar.gz",
-        "asset_hash": "f41e6899c49fc8ce12f77a8d25594604",
+        "asset_key": "vanvalenlab/cellsam",
+        "asset_hash": "hf_hub_weight_hash_placeholder",
     },
 }
 
 
 def fetch_data(asset_key: str, cache_subdir=None, file_hash=None):
-    """Fetch assets through users.deepcell.org authentication system.
+    """Fetch assets from Hugging Face Hub.
 
-    Download assets from the deepcell suite of datasets and models which
-    require user-authentication.
+    Download assets from the Hugging Face Hub which require user-authentication.
 
     .. note::
 
-       You must have a Deepcell Access Token set as an environment variable
-       with the name ``DEEPCELL_ACCESS_TOKEN`` in order to access assets.
+       You must have a Hugging Face Access Token set as an environment variable
+       with the name ``HF_TOKEN`` in order to access assets.
 
-       Access tokens can be created at <https://users.deepcell.org>_
+       Access tokens can be created at <https://huggingface.co/settings/tokens>_
 
     Args:
-        :param asset_key: Key of the file to download.
-        The list of available assets can be found on the users.deepcell.org
-        homepage.
+        :param asset_key: Key of the file to download. Should be the model ID
+        or asset path on Hugging Face Hub.
 
         :param cache_subdir: `str` indicating directory relative to
-        `~/.deepcell` where downloaded data will be cached. The default is
-        `None`, which means cache the data in `~/.deepcell`.
+        `~/.cellsam_hf` where downloaded data will be cached. The default is
+        `None`, which means cache the data in `~/.cellsam_hf`.
 
         :param file_hash: `str` represented the md5 checksum of datafile. The
         checksum is used to perform data caching. If no checksum is provided or
@@ -94,45 +92,58 @@ def fetch_data(asset_key: str, cache_subdir=None, file_hash=None):
             pass
 
     # Check for access token
-    access_token = os.environ.get("DEEPCELL_ACCESS_TOKEN")
+    access_token = os.environ.get("HF_TOKEN")
     if access_token is None:
         raise ValueError(
-            "\nDEEPCELL_ACCESS_TOKEN not found.\n"
-            "Please set your access token to the DEEPCELL_ACCESS_TOKEN\n"
-            "environment variable.\n"
+            "\nHF_TOKEN not found.\n"
+            "Please set your access token to the HF_TOKEN environment variable.\n"
             "For example:\n\n"
-            "\texport DEEPCELL_ACCESS_TOKEN=<your-token>.\n\n"
+            "\texport HF_TOKEN=<your-token>.\n\n"
             "If you don't yet have a token, you can create one at\n"
-            "https://users.deepcell.org"
+            "https://huggingface.co/settings/tokens"
         )
 
     # Request download URL
-    headers = {"X-Api-Key": access_token}
-    logging.info("Making request to server")
-    resp = requests.post(
-        _api_endpoint, headers=headers, data={"s3_key": asset_key}
+    headers = {"Authorization": f"Bearer {access_token}"}
+    logging.info("Making request to Hugging Face API")
+    resp = requests.get(
+        _api_endpoint, headers=headers
     )
-    # Raise informative exception for the specific case when the asset_key is
-    # not found in the bucket
-    if resp.status_code == 404 and resp.json().get("error") == "Key not found":
-        raise ValueError(f"Object {asset_key} not found.")
+    # Raise informative exception for the specific case when the model is
+    # not found
+    if resp.status_code == 404:
+        raise ValueError(f"Model vanvalenlab/cellsam not found on Hugging Face.")
     # Raise informative exception for the specific case when an invalid
     # API token is provided.
     if resp.status_code == 403 and (
        resp.json().get("detail") == "Authentication credentials were not provided."
     ):
         raise ValueError(
-            f"\n\nAPI token {access_token} is not valid.\n"
+            f"\n\nHF_TOKEN is not valid.\n"
             "The token may be expired - if so, create a new one at\n"
-            "https://users.deepcell.org"
+            "https://huggingface.co/settings/tokens"
         )
     # Handle all other non-http-200 status
     resp.raise_for_status()
 
-    # Parse response
+    # Parse response - Hugging Face API returns model info
     response_data = resp.json()
-    download_url = response_data["url"]
-    file_size = response_data["size"]
+    # Extract the default download URL for the model archive
+    if "siblings" in response_data:
+        # Find the .tar.gz file in the siblings
+        tar_files = [f for f in response_data["siblings"] if f["rfilename"].endswith(".tar.gz")]
+        if tar_files:
+            download_url = tar_files[0]["download_url"]
+            file_size = tar_files[0]["size"]
+        else:
+            raise ValueError(f"No .tar.gz archive found in {_api_endpoint}")
+    elif "repo" in response_data and "shrink_url" in response_data:
+        download_url = response_data["shrink_url"]
+        file_size = response_data.get("size", "0 B")
+    else:
+        # Try to get a direct download URL
+        download_url = response_data.get("download_url", "")
+        file_size = response_data.get("size", "0 B")
     # Parse file_size (TODO: would be more convenient if it were numerical, i.e. always bytes)
     val, suff = file_size.split(" ")
     # TODO: Case statement would be awesome here, but need to support all the

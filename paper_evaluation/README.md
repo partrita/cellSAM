@@ -1,5 +1,3 @@
-The code contained in this directory can be used to reproduce the
-published results from the publicly-released models.
+이 디렉토리에는 게재된 결과를 재현하는 데 사용된 코드가 포함되어 있습니다.
 
-For detailed instructions, see: <https://vanvalenlab.github.io/cellSAM/reproducibility>
-or `docs/reproducibility.md`.
+상세한 지침은 다음을 참조하세요: <https://vanvalenlab.github.io/cellSAM/reproducibility> 또는 `docs/reproducibility.md`.
