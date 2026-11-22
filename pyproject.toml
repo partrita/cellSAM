@@ -6,7 +6,7 @@ requires = ['setuptools>=61.2']
 name = 'cellSAM'
 description = 'Foundation model for cell segmentation'
 readme = 'README.md'
-requires-python = '>=3.10'
+requires-python = '>=3.11.5'
 dynamic = ['version']
 dependencies = [
     'numpy',
@@ -57,6 +57,18 @@ docs = [
 
 [project.scripts]
 cellsam = "cellSAM.cli:main"
+
+# Security floors for transitive dependencies. Several dependency advisories
+# were fixed only in the versions below; these constraints stop future lock
+# regeneration from silently reverting to a vulnerable release (e.g. the old
+# soupsieve 2.10 downgrade). Keep them bumped as new advisories are published.
+[tool.uv]
+constraint-dependencies = [
+    'pillow>=13.0.0',
+    'soupsieve>=4.1.3',
+    'filelock>=4.2.12',
+    'tornado>=6.6.1',
+]
 
 [tool.setuptools]
 zip-safe = false
